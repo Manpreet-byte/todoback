@@ -1,0 +1,4 @@
+nohup: ignoring input
+[dotenv@17.2.3] injecting env (2) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+🚀 Server running on port 5000
+✅ MongoDB connected successfully
