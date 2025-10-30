@@ -20,9 +20,32 @@ app.use(express.json());
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/todolist';
 
-mongoose.connect(MONGODB_URI)
+// Improved connection options and timeout to fail fast in case of network issues
+const mongooseOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 10000, // 10 seconds
+  connectTimeoutMS: 10000,
+};
+
+mongoose.connect(MONGODB_URI, mongooseOptions)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
+
+// Additional mongoose event logging for better diagnostics on Render
+mongoose.connection.on('connected', () => console.log('🟢 Mongoose connection open'));
+mongoose.connection.on('error', (err) => console.error('🔴 Mongoose connection error:', err));
+mongoose.connection.on('disconnected', () => console.warn('🟠 Mongoose disconnected'));
+
+// Graceful shutdown
+const gracefulExit = () => {
+  mongoose.connection.close(() => {
+    console.log('Mongoose connection closed through app termination');
+    process.exit(0);
+  });
+};
+
+process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
 
 // Todo Schema
 const todoSchema = new mongoose.Schema({
