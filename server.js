@@ -5,14 +5,16 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware - CORS Configuration
-app.use(
-  cors({
-    origin: ["https://dazzling-cucurucho-db5825.netlify.app"], // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://dazzling-cucurucho-db5825.netlify.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+
 app.use(express.json());
 
 // MongoDB connection
